@@ -1,0 +1,24 @@
+# Ignore node_modules in the frontend directory
+node_modules/
+
+# Build and distribution directories
+build/
+dist/
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache and log files
+.cache/
+.log/
+
+# Editor-specific files
+.vscode/
+.idea/
+
+# Dependency files
+yarn.lock
+package-lock.json

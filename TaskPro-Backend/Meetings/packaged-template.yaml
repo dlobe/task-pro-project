@@ -1,0 +1,227 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Meetings.
+Resources:
+  Meetings:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.Meetings
+      Runtime: nodejs16.x
+      CodeUri: s3://task-pro-services/57df301680808e3108150b8ae4a50c47
+      Description: Meetings.
+      MemorySize: 512
+      Timeout: 10
+      Policies:
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /Meetings
+            Method: POST
+            RestApiId:
+              Ref: MeetingsApi
+        Api2:
+          Type: Api
+          Properties:
+            Path: /Meetings/{Id}
+            Method: ANY
+            RestApiId:
+              Ref: MeetingsApi
+        Api3:
+          Type: Api
+          Properties:
+            Path: /Meetings
+            Method: GET
+            RestApiId:
+              Ref: MeetingsApi
+  MeetingsApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'OPTIONS,GET,POST,PUT,DELETE'"
+        AllowHeaders: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+          \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+        AllowOrigin: "'*'"
+      GatewayResponses:
+        DEFAULT_INTERNAL:
+          StatusCode: 200
+          ResponseTemplates:
+            application/json: '{}'
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+              Access-Control-Allow-Methods: "'OPTIONS,GET,POST,PUT,DELETE'"
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          version: '1.0'
+          title: Meetings
+        basePath: /Prod
+        schemes:
+        - https
+        paths:
+          /Meetings:
+            get:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              security:
+              - TaskProPool: []
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Meetings.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            post:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              security:
+              - TaskProPool: []
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Meetings.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            options:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+                      method.response.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                        \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                    responseTemplates:
+                      application/json: "{}\n"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: "{\n  \"statusCode\" : 200\n}\n"
+                type: mock
+          /Meetings/{Id}:
+            options:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                        \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                    responseTemplates:
+                      application/json: "{}\n"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: "{\n  \"statusCode\" : 200\n}\n"
+                type: mock
+            x-amazon-apigateway-any-method:
+              responses: {}
+              security:
+              - TaskProPool: []
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Meetings.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+        securityDefinitions:
+          TaskProPool:
+            type: apiKey
+            name: Authorization
+            in: header
+            x-amazon-apigateway-authtype: cognito_user_pools
+            x-amazon-apigateway-authorizer:
+              providerARNs:
+              - arn:aws:cognito-idp:us-east-1:141341433137:userpool/us-east-1_zSpMWzAW7
+              type: cognito_user_pools
+        definitions:
+          Empty: {}
+        x-amazon-apigateway-gateway-responses:
+          UNAUTHORIZED:
+            statusCode: 401
+            responseParameters:
+              gatewayresponse.header.Access-Control-Allow-Methods: "'POST,GET,OPTIONS'"
+              gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+              gatewayresponse.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Origin,Origin,\
+                \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+            responseTemplates:
+              application/json: '{"message":$context.error.messageString}'
+  MeetingsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Meetings
+      AttributeDefinitions:
+      - AttributeName: Id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+Outputs:
+  MeetingsApi:
+    Description: API URL in the Prod environment
+    Value:
+      Fn::Sub: https://${MeetingsApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/

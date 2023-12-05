@@ -1,0 +1,15 @@
+{
+  "name": "nodejs-upgrade-functions",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "amazon-cognito-identity-js": "^4.2.1",
+    "aws-sdk": "^2.659.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.3",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.2",
+    "throat": "^4.0.0",
+    "uuid": "^3.4.0"
+  }
+}

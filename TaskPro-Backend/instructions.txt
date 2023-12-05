@@ -1,0 +1,53 @@
+1- Go to task pro backend cd Cognito pool and run deploy pool commad from comands.txt
+pool will will get deploy login to aws console, -> cognito
+select task-pro pool 
+replace arn:aws:cognito-idp:us-east-1:141341433137:userpool/us-east-1_zSpMWzAW7 with new cognito arn in whole backend project
+
+go to app intigration pool
+create app client
+app client name 'task-pro', create app client
+
+note clientid and userpool id
+
+
+
+
+cd complete auth package 
+open template.yml and replace noted cognito poolID and clientId on line 9 and 10
+
+
+in deploy.txt replace task-pro-services bucket name with your service bucket name
+
+run To package the project and To deploy the project commands respectively from complete Auth package/deploy.txt
+
+
+cd Contacts
+
+in deploy.txt replace task-pro-services bucket name with your service bucket name
+
+run To package the project and To deploy the project commands respectively 
+
+cd Meetings
+
+in deploy.txt replace task-pro-services bucket name with your service bucket name
+
+run To package the project and To deploy the project commands respectively
+
+cd Organizations
+
+in deploy.txt replace task-pro-services bucket name with your service bucket name
+
+run To package the project and To deploy the project commands respectively
+
+
+cd Tasks
+
+in deploy.txt replace task-pro-services bucket name with your service bucket name
+
+run To package the project and To deploy the project commands respectively
+
+cd Workstreams
+
+in deploy.txt replace task-pro-services bucket name with your service bucket name
+
+run To package the project and To deploy the project commands respectively

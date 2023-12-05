@@ -1,0 +1,522 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: CognitoAuthAPi.
+Globals:
+  Function:
+    Runtime: nodejs16.x
+    Environment:
+      Variables:
+        poolId: us-east-1_zSpMWzAW7
+        clientId: 8s8oie2qc0p0ett1o2oqi06lo
+Resources:
+  CognitoAuthMethod:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.CognitoAuthMethod
+      Runtime: nodejs16.x
+      CodeUri: s3://task-pro-services/b86e9928bb787755cd646c91d0ebb3fc
+      Description: SignUp.
+      MemorySize: 512
+      Timeout: 15
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - cognito-idp:*
+          Resource: '*'
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /SignUp
+            Method: POST
+            RestApiId:
+              Ref: CognitoAuthAPi
+  SignInMethod:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.SignInMethod
+      Layers:
+      - Ref: CognitoDependencieslayer
+      Runtime: nodejs16.x
+      CodeUri: s3://task-pro-services/f214a1f4e0f641c27a66e36d2314e21e
+      Description: SignIn.
+      MemorySize: 512
+      Timeout: 10
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - cognito-idp:*
+          Resource: '*'
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /SignIn
+            Method: POST
+            RestApiId:
+              Ref: CognitoAuthAPi
+        Api2:
+          Type: Api
+          Properties:
+            Path: /SignIn
+            Method: PUT
+            RestApiId:
+              Ref: CognitoAuthAPi
+  ForgetPasswordMethod:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: forgotPassword.ForgetPasswordMethod
+      Layers:
+      - Ref: CognitoDependencieslayer
+      Runtime: nodejs16.x
+      CodeUri: s3://task-pro-services/8a82b24ac5c799109ece68e2ed3d5243
+      Description: ForgetPassword.
+      MemorySize: 512
+      Timeout: 10
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - cognito-idp:*
+          Resource: '*'
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /ForgetPassword
+            Method: POST
+            RestApiId:
+              Ref: CognitoAuthAPi
+        Api2:
+          Type: Api
+          Properties:
+            Path: /ForgetPassword
+            Method: PUT
+            RestApiId:
+              Ref: CognitoAuthAPi
+  CognitoDependencieslayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: cognito-dependencies
+      Description: cognito Dependencies
+      ContentUri: s3://task-pro-services/e034762f39428f0d6d67e578e138ec92
+      CompatibleRuntimes:
+      - nodejs10.x
+      - nodejs16.x
+      LicenseInfo: MIT
+      RetentionPolicy: Retain
+  CognitoAuthAPi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: stage
+      Cors:
+        AllowMethods: "'OPTIONS,GET,POST,PUT,DELETE'"
+        AllowHeaders: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+          \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+        AllowOrigin: "'*'"
+      GatewayResponses:
+        DEFAULT_INTERNAL:
+          StatusCode: 200
+          ResponseTemplates:
+            application/json: '{}'
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+              Access-Control-Allow-Methods: "'OPTIONS,GET,POST,PUT,DELETE'"
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          version: '1.0'
+          title: CognitoAuthAPi
+        basePath: /Stage
+        schemes:
+        - https
+        paths:
+          /SignUp:
+            get:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoAuthMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            delete:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoAuthMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: DELETE
+                type: aws_proxy
+            post:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoAuthMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            put:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoAuthMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            options:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'GET,PUT,DELETE,OPTIONS,POST'"
+                      method.response.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                        \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                    responseTemplates:
+                      application/json: "{}\n"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: "{\n  \"statusCode\" : 200\n}\n"
+                type: mock
+          /SignUp/{FileId}:
+            any:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoAuthMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            options:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                        \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                    responseTemplates:
+                      application/json: "{}\n"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: "{\n  \"statusCode\" : 200\n}\n"
+                type: mock
+            x-amazon-apigateway-any-method:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoAuthMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+          /SignIn:
+            get:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SignInMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            delete:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SignInMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: DELETE
+                type: aws_proxy
+            post:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SignInMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            put:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SignInMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            options:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'GET,DELETE,POST,PUT,OPTIONS'"
+                      method.response.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                        \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                    responseTemplates:
+                      application/json: "{}\n"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: "{\n  \"statusCode\" : 200\n}\n"
+                type: mock
+          /ForgetPassword:
+            put:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ForgetPasswordMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            post:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ForgetPasswordMethod.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            options:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'GET,PUT,DELETE,OPTIONS,POST'"
+                      method.response.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                        \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                    responseTemplates:
+                      application/json: "{}\n"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: "{\n  \"statusCode\" : 200\n}\n"
+                type: mock
+        definitions:
+          Empty: {}
+        x-amazon-apigateway-gateway-responses:
+          UNAUTHORIZED:
+            statusCode: 401
+            responseParameters:
+              gatewayresponse.header.Access-Control-Allow-Methods: "'POST,GET,DELETE,OPTIONS'"
+              gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+              gatewayresponse.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Origin,Origin,\
+                \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+            responseTemplates:
+              application/json: '{"message":$context.error.messageString}'

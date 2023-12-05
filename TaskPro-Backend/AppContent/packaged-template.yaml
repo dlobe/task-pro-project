@@ -1,0 +1,194 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AppContent.
+Resources:
+  AppContent:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.AppContent
+      Runtime: nodejs16.x
+      CodeUri: s3://task-pro-services/83e8efe5319507eb950eab9dfd684dc5
+      Description: AppContent.
+      MemorySize: 512
+      Timeout: 10
+      Policies:
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /AppContent
+            Method: POST
+            RestApiId:
+              Ref: AppContentApi
+        Api2:
+          Type: Api
+          Properties:
+            Path: /AppContent/{Id}
+            Method: ANY
+            RestApiId:
+              Ref: AppContentApi
+        Api3:
+          Type: Api
+          Properties:
+            Path: /AppContent
+            Method: GET
+            RestApiId:
+              Ref: AppContentApi
+  AppContentApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'OPTIONS,GET,POST,PUT,DELETE'"
+        AllowHeaders: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+          \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+        AllowOrigin: "'*'"
+      GatewayResponses:
+        DEFAULT_INTERNAL:
+          StatusCode: 200
+          ResponseTemplates:
+            application/json: '{}'
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+              Access-Control-Allow-Methods: "'OPTIONS,GET,POST,PUT,DELETE'"
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          version: '1.0'
+          title: AppContent
+        basePath: /Prod
+        schemes:
+        - https
+        paths:
+          /AppContent:
+            get:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AppContent.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            post:
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AppContent.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+            options:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  schema:
+                    $ref: '#/definitions/Empty'
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+                      method.response.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                        \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                    responseTemplates:
+                      application/json: "{}\n"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: "{\n  \"statusCode\" : 200\n}\n"
+                type: mock
+          /AppContent/{Id}:
+            options:
+              consumes:
+              - application/json
+              produces:
+              - application/json
+              responses:
+                '200':
+                  description: 200 response
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Access-Control-Allow-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Origin,\
+                        \ X-Requested-With,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,Content-Type,Accept,Authorization'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                    responseTemplates:
+                      application/json: "{}\n"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  application/json: "{\n  \"statusCode\" : 200\n}\n"
+                type: mock
+            x-amazon-apigateway-any-method:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AppContent.Arn}/invocations
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+  AppContentTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: AppContent
+      AttributeDefinitions:
+      - AttributeName: Id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1

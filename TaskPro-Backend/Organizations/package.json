@@ -1,0 +1,9 @@
+{
+  "name": "nodejs-upgrade-functions",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "throat": "^4.0.0",
+    "uuid": "^3.3.2"
+  }
+}
